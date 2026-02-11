@@ -97,7 +97,7 @@ public class BicForm: Form {
                     string target = line.Substring(privmsgIndex + 9, colonIndex - privmsgIndex - 9).Trim();
                     string msg = line.Substring(colonIndex + 1).Trim();
                     
-                    string displayMsg = $"[{sender}] <{target}> {msg}\r\n";
+                    string displayMsg = $"{target} <{sender}> {msg}\r\n";
                     SendText(displayMsg, Color.Cyan);
                 }
             }
@@ -221,15 +221,15 @@ public class BicForm: Form {
                 string namesTarget = parts.Length >= 2 ? parts[1] : currentTarget;
                 SendRaw($"NAMES {namesTarget}");
                 break;
-			case "quit": {
-				string reason = "";
-				if (parts.Length >= 2) {
-					reason = string.Join(" ", parts, 1, parts.Length - 1);
-				}
-				SendRaw("QUIT :" + reason);
-				Close();
-				break;
-			}
+            case "quit": {
+                string reason = "";
+                if (parts.Length >= 2) {
+                    reason = string.Join(" ", parts, 1, parts.Length - 1);
+                }
+                SendRaw("QUIT :" + reason);
+                Close();
+                break;
+            }
             default:
                 // Regular message to current target
                 SendRaw($"PRIVMSG {currentTarget} :{input}");
