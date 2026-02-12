@@ -263,7 +263,7 @@ public class BicForm: Form {
             return;
         }
 
-        int maxLines = 2048;
+        int maxLines = 4096;
         if (chatBox.Lines.Length > maxLines)
         {
             // Copy current lines, remove from the top
