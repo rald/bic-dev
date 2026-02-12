@@ -75,15 +75,13 @@ public class BicForm: Form {
 
 	protected override void OnResizeBegin(EventArgs e) {
 		base.OnResizeBegin(e);
-		this.SuspendLayout();
-		inputBox.Visible = false;
+		SuspendLayout();
 		chatBox.Visible = false;
 	}
 
 	protected override void OnResizeEnd(EventArgs e) {
 		base.OnResizeEnd(e);
-		this.ResumeLayout();
-		inputBox.Visible = true;
+		ResumeLayout();
 		chatBox.ScrollToCaret();
 		chatBox.Visible = true;
 	}
