@@ -251,8 +251,20 @@ public class BicForm: Form {
 
     private void BicForm_KeyDown(object sender, KeyEventArgs e) {
         if (e.KeyCode == Keys.Escape) {
-            Disconnect();
-            Close();
+            e.Handled = true;
+        
+   			DialogResult result = MessageBox.Show(
+				"Do you want to quit?", // Message
+				"Confirmation",             // Title
+				MessageBoxButtons.YesNo,    // Buttons
+				MessageBoxIcon.Question     // Icon
+			);
+
+			if (result == DialogResult.Yes)
+			{
+		        Disconnect();
+		        Close();
+			}
         }
     }
 
