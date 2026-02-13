@@ -28,11 +28,11 @@ public class BicForm: Form {
     }
 
     private void InitializeComponent() {
-/*
+
 		SetStyle(	ControlStyles.AllPaintingInWmPaint |
 					ControlStyles.UserPaint |
 					ControlStyles.DoubleBuffer, true);
-*/
+
         Text = "bic";
         Size = new Size(320,200);
 
@@ -84,8 +84,8 @@ public class BicForm: Form {
 		base.OnResizeEnd(e);
 		this.ResumeLayout();
 		inputBox.Visible = true;
-		chatBox.Visible = true;
 		chatBox.ScrollToCaret();
+		chatBox.Visible = true;
 	}
 
     private void ChatBox_LinkClicked(object sender, LinkClickedEventArgs e)
