@@ -71,8 +71,6 @@ public class BicForm: Form {
         Controls.Add(inputBox);
 
         CenterToScreen();
-        
-        FormClosing += BicForm_FormClosing;
     }
 
 	protected override void OnResizeBegin(EventArgs e) {
@@ -88,13 +86,6 @@ public class BicForm: Form {
 		inputBox.Visible = true;
 		chatBox.Visible = true;
 		chatBox.ScrollToCaret();
-	}
-
-	private void BicForm_FormClosing(object sender, FormClosingEventArgs e) {
-		if (MessageBox.Show("Quit?", "Confirm", MessageBoxButtons.YesNo) != DialogResult.Yes) {
-			e.Cancel = true;  // Prevents closing
-		}
-		Disconnect();
 	}
 
     private void ChatBox_LinkClicked(object sender, LinkClickedEventArgs e)
@@ -299,10 +290,18 @@ public class BicForm: Form {
         if (e.KeyCode == Keys.Escape) {
             e.Handled = true;
 
-			if (MessageBox.Show("Quit?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes) {
-				Disconnect();
-				Close();
-			}
+            DialogResult result = MessageBox.Show(
+                "Do you want to quit?", // Message
+                "Confirmation",             // Title
+                MessageBoxButtons.YesNo,    // Buttons
+                MessageBoxIcon.Question     // Icon
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                Disconnect();
+                Close();
+            }
         }
     }
 
