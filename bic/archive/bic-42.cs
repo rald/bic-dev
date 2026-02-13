@@ -72,6 +72,7 @@ public class BicForm: Form {
 
         CenterToScreen();
         
+        FormClosing += BicForm_FormClosing;
     }
 
 	protected override void OnResizeBegin(EventArgs e) {
@@ -87,6 +88,13 @@ public class BicForm: Form {
 		inputBox.Visible = true;
 		chatBox.Visible = true;
 		chatBox.ScrollToCaret();
+	}
+
+	private void BicForm_FormClosing(object sender, FormClosingEventArgs e) {
+		if (MessageBox.Show("Quit?", "Confirm", MessageBoxButtons.YesNo) != DialogResult.Yes) {
+			e.Cancel = true;  // Prevents closing
+		}
+		Disconnect();
 	}
 
     private void ChatBox_LinkClicked(object sender, LinkClickedEventArgs e)
