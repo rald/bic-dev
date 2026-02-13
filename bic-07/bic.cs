@@ -28,11 +28,11 @@ public class BicForm: Form {
     }
 
     private void InitializeComponent() {
-        // Double Buffer
+/*
 		SetStyle(	ControlStyles.AllPaintingInWmPaint |
 					ControlStyles.UserPaint |
 					ControlStyles.DoubleBuffer, true);
-
+*/
         Text = "bic";
         Size = new Size(320,200);
 

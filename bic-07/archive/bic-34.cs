@@ -28,7 +28,7 @@ public class BicForm: Form {
     }
 
     private void InitializeComponent() {
-        // Double Buffer
+
 		SetStyle(	ControlStyles.AllPaintingInWmPaint |
 					ControlStyles.UserPaint |
 					ControlStyles.DoubleBuffer, true);
@@ -76,14 +76,12 @@ public class BicForm: Form {
 	protected override void OnResizeBegin(EventArgs e) {
 		base.OnResizeBegin(e);
 		this.SuspendLayout();
-		inputBox.Visible = false;
 		chatBox.Visible = false;
 	}
 
 	protected override void OnResizeEnd(EventArgs e) {
 		base.OnResizeEnd(e);
 		this.ResumeLayout();
-		inputBox.Visible = true;
 		chatBox.Visible = true;
 		chatBox.ScrollToCaret();
 	}
@@ -168,12 +166,35 @@ public class BicForm: Form {
             ParsePrivmsg(raw);
         } else if (raw.Contains(" 001 ")) {
             AppendChat("<connected to " + serverHost + ":" + serverPort + ">", Color.Yellow);
+        } else if (raw.Contains(" 321 ")) {  // RPL_LISTSTART
+            AppendSystem(">>> channel list:");
+        } else if (raw.Contains(" 322 ")) {  // RPL_LIST
+            ParseListResponse(raw);
+        } else if (raw.Contains(" 323 ")) {  // RPL_LISTEND
+            AppendSystem(">>> end of channel list");
         } else if (raw.Contains(" 353 ")) {  // NAMES list
             ParseNamesList(raw);
         } else if (raw.Contains(" 366 ")) {  // End of NAMES
             // Optional: could add a marker here if needed
         } else {
             AppendServer(raw.Trim());
+        }
+    }
+
+    private void ParseListResponse(string raw) {
+        try {
+            string[] parts = raw.Split(' ');
+            if (parts.Length < 5) return;
+            
+            // RPL_LIST format: "<channel> <usercount> :<topic>"
+            string channel = parts[3];
+            int userCount = int.Parse(parts[4]);
+            string topic = raw.Substring(raw.LastIndexOf(" :") + 2).Trim();
+            
+            string display = $"[{userCount}] {channel} <{topic}>";
+            AppendChat(display, Color.Cyan);
+        } catch {
+            AppendError("Failed to parse list: " + raw.Trim());
         }
     }
 
@@ -229,13 +250,12 @@ public class BicForm: Form {
         }
     }
 
-	private static readonly Regex IrcCodesRegex = new Regex(
-		@"\x03(?:\d{1,2}(?:,\d{1,2})?)?|[\x02\x0F\x12\x16\x1D\x1F\x10-\x11\x13-\x15\x17-\x1E]",
-		RegexOptions.Compiled);
-
-	public string StripIrcCodes(string message) {
-		return IrcCodesRegex.Replace(message ?? "", "");
-	}
+    private string StripIrcCodes(string message) {
+        message = Regex.Replace(message, @"\x03(\d{1,2}(?:,\d{1,2})?)?", "");
+        message = Regex.Replace(message, "[\x02\x0F\x12\x16\x1D\x1F]", "");
+        message = Regex.Replace(message, "[\x01-\x09\x0B-\x1F]", "");
+        return message;
+    }
 
     private void AppendChat(string text, Color foreColor = default(Color)) {
         if (InvokeRequired) {
@@ -243,7 +263,7 @@ public class BicForm: Form {
             return;
         }
 
-        int maxLines = 2048;
+        int maxLines = 4096;
         if (chatBox.Lines.Length > maxLines)
         {
             // Copy current lines, remove from the top
@@ -396,7 +416,8 @@ public class BicForm: Form {
                 break;
 
             case "/list":
-                SendRaw("LIST -25\r\n");
+                SendRaw("LIST\r\n");
+                AppendSystem(">>> requesting channel list...");
                 break;
 
             case "/msg":
