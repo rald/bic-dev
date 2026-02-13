@@ -233,8 +233,7 @@ public class BicForm: Form {
 		@"\x03(?:\d{1,2}(?:,\d{1,2})?)?|[\x02\x0F\x12\x16\x1D\x1F\x10-\x11\x13-\x15\x17-\x1E]",
 		RegexOptions.Compiled);
 
-	public string StripIrcCodes(string message) 
-	{
+	public string StripIrcCodes(string message) {
 		return IrcCodesRegex.Replace(message ?? "", "");
 	}
 
@@ -399,22 +398,6 @@ public class BicForm: Form {
             case "/list":
                 SendRaw("LIST -25\r\n");
                 break;
-
-			case "/topic":
-				if (parts.Length > 2) {
-					string channel = parts[1];
-					string topic = string.Join(" ", parts, 2, parts.Length - 2);
-					SendRaw("TOPIC " + channel + " :" + topic + "\r\n");
-					AppendSystem(">>> topic set for " + channel + ": " + topic);
-				} else if (parts.Length > 1) {
-					// Query current topic
-					string channel = parts[1];
-					SendRaw("TOPIC " + channel + "\\r\\n");
-					AppendSystem(">>> requesting topic for " + channel);
-				} else {
-					AppendError("Usage: /topic <#channel> [topic] | /topic <#channel>");
-				}
-				break;
 
             case "/msg":
                 if (parts.Length > 2) {
